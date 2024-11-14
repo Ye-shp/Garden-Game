@@ -15,24 +15,25 @@ const GRID_HEIGHT = 15;
 const SPECIAL_COMBINATIONS = {
   ROSE_MOONFLOWER: {
     plants: ['ROSE', 'MOONFLOWER'],
-    message: "Like these flowers under moonlight, you make everything magical ✨",
-    achievement: "Moonlit Romance"
+    message: "Sexiest gyal ✨",
+    achievement: "Sexiest Woman Alive"
   },
   CRYSTAL_STARBLOOM: {
     plants: ['CRYSTAL_LOTUS', 'STARBLOOM'],
-    message: "Your presence sparkles brighter than any star in this garden 💫",
-    achievement: "Stellar Connection"
+    message: "Your presence is a gift 💫",
+    achievement: "Lover girl!!!!"
   },
   RAINBOW_PHOENIX: {
     plants: ['RAINBOW_IRIS', 'PHOENIX_BLOOM'],
-    message: "Together we create something beautiful and rare, just like you 🌈",
-    achievement: "Magical Bond"
+    message: "You're a fruit cup 🌈",
+    achievement: "Out the closet"
   },
   DRAGON_CRYSTAL: {
     plants: ['DRAGON_SNAP', 'CRYSTAL_LOTUS'],
-    message: "Strong yet gentle, like our love ✨",
-    achievement: "Mystic Harmony"
-  }
+    message: "You cool big bro✨",
+    achievement: "Big bro award"
+  },
+
 };
 
 // Plant Definitions with Cross-Pollination Traits
@@ -63,31 +64,6 @@ const PLANTS = {
     rarity: 'legendary',
     description: 'Rare flower that blooms under moonlight'
   },
-  STARBLOOM: {
-    name: 'Starbloom',
-    emoji: '⭐',
-    growthStage: ['🌱', '✨', '⚡', '⭐'],
-    needs: { moonlight: 10, harmony: 7, magic: 6 },
-    effects: { light: 5, dreams: 4, protection: 3 },
-    companionBonus: ['CRYSTAL_LOTUS', 'MOONFLOWER'],
-    pollinationChance: 0.35,
-    offspring: ['PHOENIX_BLOOM', 'STARBLOOM'],
-    rarity: 'epic',
-    description: 'Glows with celestial energy'
-  },
-  LAVENDER: {
-    name: 'Lavender',
-    emoji: '💜',
-    growthStage: ['🌱', '🌿', '🌸', '💜'],
-    needs: { water: 4, sunlight: 9, pollination: 5 },
-    effects: { harmony: 2, repelPests: 3, calm: 4 },
-    companionBonus: ['ROSE', 'SAGE'],
-    pollinationChance: 0.2,
-    offspring: ['LAVENDER', 'ROSE'],
-    repels: ['WEED'],
-    rarity: 'common',
-    description: 'Brings peace and tranquility'
-  },
   MOONFLOWER: {
     name: 'Moonflower',
     emoji: '🌙',
@@ -99,6 +75,18 @@ const PLANTS = {
     offspring: ['ROSE', 'MOONFLOWER'],
     rarity: 'rare',
     description: 'Blooms under moonlight'
+  },
+  STARBLOOM: {
+    name: 'Starbloom',
+    emoji: '⭐',
+    growthStage: ['🌱', '✨', '⚡', '⭐'],
+    needs: { moonlight: 10, harmony: 7, magic: 6 },
+    effects: { light: 5, dreams: 4, protection: 3 },
+    companionBonus: ['CRYSTAL_LOTUS', 'MOONFLOWER'],
+    pollinationChance: 0.35,
+    offspring: ['PHOENIX_BLOOM', 'STARBLOOM'],
+    rarity: 'epic',
+    description: 'Glows with celestial energy'
   },
   PHOENIX_BLOOM: {
     name: 'Phoenix Bloom',
@@ -135,6 +123,69 @@ const PLANTS = {
     offspring: ['RAINBOW_IRIS', 'ROSE'],
     rarity: 'rare',
     description: 'Changes colors with mood'
+  },
+  LAVENDER: {
+    name: 'Lavender',
+    emoji: '💜',
+    growthStage: ['🌱', '🌿', '🌸', '💜'],
+    needs: { water: 4, sunlight: 9, pollination: 5 },
+    effects: { harmony: 2, repelPests: 3, calm: 4 },
+    companionBonus: ['ROSE', 'SAGE'],
+    pollinationChance: 0.2,
+    offspring: ['LAVENDER', 'ROSE'],
+    repels: ['WEED'],
+    rarity: 'common',
+    description: 'Brings peace and tranquility'
+  },
+  SUNFLOWER: {
+    name: 'Sunflower',
+    emoji: '🌻',
+    growthStage: ['🌱', '🌿', '🌼', '🌻'],
+    needs: { water: 6, sunlight: 10, pollination: 7 },
+    effects: { joy: 4, energy: 5, attractPollinators: 4 },
+    companionBonus: ['PHOENIX_BLOOM', 'SAGE'],
+    pollinationChance: 0.5,
+    offspring: ['SUNFLOWER', 'RAINBOW_IRIS'],
+    repels: ['SHADOW_VINE'],
+    rarity: 'common',
+    description: 'Always follows the sun'
+  },
+  SAGE: {
+    name: 'Sage',
+    emoji: '🌿',
+    growthStage: ['🌱', '🌿', '🍃', '🌿'],
+    needs: { water: 5, sunlight: 7, pollination: 4 },
+    effects: { purification: 3, repelPests: 4, wisdom: 2 },
+    companionBonus: ['LAVENDER', 'SUNFLOWER'],
+    pollinationChance: 0.15,
+    offspring: ['SAGE', 'LAVENDER'],
+    repels: ['WEED'],
+    rarity: 'common',
+    description: 'Enhances the garden’s harmony'
+  },
+  SHADOW_VINE: {
+    name: 'Shadow Vine',
+    emoji: '🕸️',
+    growthStage: ['🌱', '🕸️', '🌑', '🕸️'],
+    needs: { moonlight: 7, magic: 5, water: 3 },
+    effects: { mystery: 4, dreams: 3, repelLight: 2 },
+    companionBonus: ['MOONFLOWER', 'CRYSTAL_LOTUS'],
+    pollinationChance: 0.1,
+    offspring: ['SHADOW_VINE'],
+    rarity: 'rare',
+    description: 'Creeps silently through the night'
+  },
+  THISTLE: {
+    name: 'Thistle',
+    emoji: '🌾',
+    growthStage: ['🌱', '🌾', '🥀', '🌾'],
+    needs: { water: 3, sunlight: 6, pollination: 2 },
+    effects: { repelPests: 5, protection: 3, resilience: 2 },
+    companionBonus: ['ROSE'],
+    pollinationChance: 0.05,
+    offspring: ['THISTLE'],
+    rarity: 'common',
+    description: 'Protects the garden from unwanted visitors'
   },
   // Additional plants can be added here with similar structure
 };
@@ -888,48 +939,50 @@ const YelebesGardenGame = () => {
       
       {/* Main Content */}
       <div className="flex flex-1 p-4 overflow-hidden">
-        {/* Garden Grid */}
-        <div id="garden-grid" className="grid relative" style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${GRID_WIDTH}, ${TILE_SIZE}px)`,
-          gridTemplateRows: `repeat(${GRID_HEIGHT}, ${TILE_SIZE}px)`,
-          gap: '2px',
-          flexGrow: 1,
-          backgroundColor: '#e0ffe0',
-          padding: '10px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-          transform: window.innerWidth < 640 ? 'scale(0.8)' : 'scale(1)', // Example scaling
-        }}>
-          {garden.map((row, y) =>
-            row.map((cell, x) => (
-              <div
-                key={`${x}-${y}`}
-                className={classNames(
-                  "garden-tile border flex items-center justify-center cursor-pointer transition-all duration-300",
-                  {
-                    'bg-green-100 hover:bg-green-200': selectedTool === TOOLS.PLANT && !cell,
-                    'bg-blue-100 hover:bg-blue-200': selectedTool === TOOLS.WATER && cell,
-                    'bg-red-100 hover:bg-red-200': selectedTool === TOOLS.REMOVE && cell,
-                    'bg-gray-100 cursor-not-allowed': paused
-                  }
-                )}
-                onClick={() => handleTileClick(x, y)}
-                style={{ width: TILE_SIZE, height: TILE_SIZE }}
-                title={cell ? PLANTS[cell.type].description : 'Empty'}
-              >
-                {cell ? PLANTS[cell.type].emoji : ''}
-              </div>
-            ))
-          )}
+        {/* Garden Grid Container */}
+        <div className="flex justify-center w-full">
+          {/* Garden Grid */}
+          <div id="garden-grid" className="grid relative mx-auto px-4 sm:px-0" style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${GRID_WIDTH}, ${TILE_SIZE}px)`,
+            gridTemplateRows: `repeat(${GRID_HEIGHT}, ${TILE_SIZE}px)`,
+            gap: '2px',
+            flexGrow: 1,
+            backgroundColor: '#e0ffe0',
+            padding: '10px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',            
+          }}>
+            {garden.map((row, y) =>
+              row.map((cell, x) => (
+                <div
+                  key={`${x}-${y}`}
+                  className={classNames(
+                    "garden-tile border flex items-center justify-center cursor-pointer transition-all duration-300",
+                    {
+                      'bg-green-100 hover:bg-green-200': selectedTool === TOOLS.PLANT && !cell,
+                      'bg-blue-100 hover:bg-blue-200': selectedTool === TOOLS.WATER && cell,
+                      'bg-red-100 hover:bg-red-200': selectedTool === TOOLS.REMOVE && cell,
+                      'bg-gray-100 cursor-not-allowed': paused
+                    }
+                  )}
+                  onClick={() => handleTileClick(x, y)}
+                  style={{ width: TILE_SIZE, height: TILE_SIZE }}
+                  title={cell ? PLANTS[cell.type].description : 'Empty'}
+                >
+                  {cell ? PLANTS[cell.type].emoji : ''}
+                </div>
+              ))
+            )}
+          </div>
         </div>
         
         {/* Side Panel */}
         <div className={classNames(
           "w-64 flex flex-col overflow-y-auto bg-white rounded-lg shadow-lg p-4 fixed top-0 right-0 h-full z-50 transition-transform duration-300 sm:static sm:h-auto sm:w-64 sm:flex sm:translate-x-0",
           {
-            "translate-x-full": !isSidePanelOpen,
-            "translate-x-0": isSidePanelOpen,
+            "translate-x-full": !isSidePanelOpen, // Hidden by translating full width on small screens
+            "translate-x-0": isSidePanelOpen, // Visible when translated to 0
           }
         )}>
           {/* Close Button for Mobile */}
@@ -1021,9 +1074,8 @@ const YelebesGardenGame = () => {
                     if (resources.seeds[plant.rarity.toLowerCase()] > 0) {
                       setSelectedPlant(key);
                       setSelectedTool(TOOLS.PLANT);
-                      if (window.innerWidth < 640) {
-                        setIsSidePanelOpen(false); // Close side panel on mobile after selection
-                      }
+                      // Automatically close the side panel on mobile after selection
+                      setIsSidePanelOpen(false);
                     }
                   }}
                   disabled={resources.seeds[plant.rarity.toLowerCase()] <= 0}
