@@ -1,15 +1,17 @@
+// YelebesGardenGame.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Heart, Droplet, Sun, Sparkles, Moon, Clock, Award, Flower2, Trash2 
+  Heart, Droplet, Sun, Sparkles, Moon, Clock, Award, Flower2, Trash2, Menu, X 
 } from 'lucide-react';
 import classNames from 'classnames';
 
 // Constants
-const TILE_SIZE = 40; // Slightly smaller tiles to fit more
+const TILE_SIZE = 40; // Size of each garden tile
 const GRID_WIDTH = 20;
 const GRID_HEIGHT = 15;
 
-// Enhanced special combinations with romantic messages
+// Special Combinations with Romantic Messages
 const SPECIAL_COMBINATIONS = {
   ROSE_MOONFLOWER: {
     plants: ['ROSE', 'MOONFLOWER'],
@@ -33,7 +35,7 @@ const SPECIAL_COMBINATIONS = {
   }
 };
 
-// Enhanced plant definitions with cross-pollination traits
+// Plant Definitions with Cross-Pollination Traits
 const PLANTS = {
   ROSE: {
     name: 'Rose',
@@ -244,7 +246,7 @@ const calculateEnvironmentalScore = (cell, adjacentCells, weather) => {
   return score;
 };
 
-// New cross-pollination mechanics
+// New cross-pollination mechanics with limit
 const attemptCrossPollination = (garden, x, y) => {
   const cell = garden[y][x];
   if (!cell || cell.hasCrossPollinated) return null; // Check if already cross-pollinated
@@ -394,6 +396,9 @@ const YelebesGardenGame = () => {
   });
   const [paused, setPaused] = useState(false);
   const [score, setScore] = useState(0);
+
+  // New State for Mobile Side Panel
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
   // Simulation Tick
   useEffect(() => {
@@ -635,7 +640,7 @@ const YelebesGardenGame = () => {
     return newPlant;
   };
 
-  // Handle Tile Click (Modified to include tool selection and combination checking)
+  // Handle Tile Click (Includes Tool Selection and Combination Checking)
   const handleTileClick = (x, y) => {
     if (paused) return;
 
@@ -722,7 +727,7 @@ const YelebesGardenGame = () => {
     }
   };
 
-  // Update Weather (Modified to change every 3 minutes)
+  // Update Weather (Changes every 3 minutes)
   const updateWeather = useCallback(() => {
     const currentTime = Date.now();
     if (currentTime - lastWeatherChange >= 180000) { // 3 minutes in ms
@@ -830,15 +835,15 @@ const YelebesGardenGame = () => {
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50">
       {/* Header with magical essence */}
-      <div className="p-4 bg-white/80 backdrop-blur-sm shadow-lg border-b border-purple-100">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-              Yelebe's Enchanted Garden
-            </h1>
-            <Award className="text-yellow-500" />
-          </div>
-          <div className="flex gap-6">
+      <div className="p-4 bg-white/80 backdrop-blur-sm shadow-lg border-b border-purple-100 flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+            Yelebe's Enchanted Garden
+          </h1>
+          <Award className="text-yellow-500 hidden sm:inline" />
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex gap-6 items-center hidden sm:flex">
             {/* Weather Display */}
             <div className="flex items-center">
               <Sun className="mr-2" />
@@ -869,16 +874,15 @@ const YelebesGardenGame = () => {
               <Award className="mr-2 text-yellow-500" />
               <span>Score: {score}</span>
             </div>
-            {/* Pause/Resume Button */}
-            <div className="flex items-center">
-              <button 
-                className={`p-2 rounded ${paused ? 'bg-green-500' : 'bg-red-500'} text-white`}
-                onClick={() => setPaused(prev => !prev)}
-              >
-                {paused ? 'Resume' : 'Pause'}
-              </button>
-            </div>
           </div>
+          {/* Mobile Menu Button */}
+          <button
+            className="sm:hidden p-2 rounded bg-gray-200 focus:outline-none"
+            onClick={() => setIsSidePanelOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu />
+          </button>
         </div>
       </div>
       
@@ -894,7 +898,8 @@ const YelebesGardenGame = () => {
           backgroundColor: '#e0ffe0',
           padding: '10px',
           borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          transform: window.innerWidth < 640 ? 'scale(0.8)' : 'scale(1)', // Example scaling
         }}>
           {garden.map((row, y) =>
             row.map((cell, x) => (
@@ -920,44 +925,64 @@ const YelebesGardenGame = () => {
         </div>
         
         {/* Side Panel */}
-        <div className="ml-6 w-64 flex flex-col overflow-y-auto">
+        <div className={classNames(
+          "w-64 flex flex-col overflow-y-auto bg-white rounded-lg shadow-lg p-4 fixed top-0 right-0 h-full z-50 transition-transform duration-300 sm:static sm:h-auto sm:w-64 sm:flex sm:translate-x-0",
+          {
+            "translate-x-full": !isSidePanelOpen,
+            "translate-x-0": isSidePanelOpen,
+          }
+        )}>
+          {/* Close Button for Mobile */}
+          {isSidePanelOpen && (
+            <button
+              className="self-end mb-4 p-2 rounded bg-gray-200 focus:outline-none sm:hidden"
+              onClick={() => setIsSidePanelOpen(false)}
+              aria-label="Close menu"
+            >
+              <X />
+            </button>
+          )}
+          
           {/* Tools Selection */}
           <div className="mb-6 p-2 bg-white/50 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-2">Tools</h2>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <button 
                 className={classNames(
-                  'p-2 rounded',
+                  'p-3 rounded flex items-center justify-center',
                   {
                     'bg-green-500 text-white': selectedTool === TOOLS.PLANT,
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.PLANT
                   }
                 )}
                 onClick={() => setSelectedTool(TOOLS.PLANT)}
+                aria-label="Plant tool"
               >
                 <Flower2 />
               </button>
               <button 
                 className={classNames(
-                  'p-2 rounded',
+                  'p-3 rounded flex items-center justify-center',
                   {
                     'bg-blue-500 text-white': selectedTool === TOOLS.WATER,
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.WATER
                   }
                 )}
                 onClick={() => setSelectedTool(TOOLS.WATER)}
+                aria-label="Water tool"
               >
                 <Droplet />
               </button>
               <button 
                 className={classNames(
-                  'p-2 rounded',
+                  'p-3 rounded flex items-center justify-center',
                   {
                     'bg-red-500 text-white': selectedTool === TOOLS.REMOVE,
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.REMOVE
                   }
                 )}
                 onClick={() => setSelectedTool(TOOLS.REMOVE)}
+                aria-label="Remove tool"
               >
                 <Trash2 />
               </button>
@@ -996,9 +1021,13 @@ const YelebesGardenGame = () => {
                     if (resources.seeds[plant.rarity.toLowerCase()] > 0) {
                       setSelectedPlant(key);
                       setSelectedTool(TOOLS.PLANT);
+                      if (window.innerWidth < 640) {
+                        setIsSidePanelOpen(false); // Close side panel on mobile after selection
+                      }
                     }
                   }}
                   disabled={resources.seeds[plant.rarity.toLowerCase()] <= 0}
+                  aria-label={`Select ${plant.name}`}
                 >
                   <span>{plant.emoji}</span>
                   <span>{plant.name}</span>
@@ -1080,8 +1109,22 @@ const YelebesGardenGame = () => {
           <Clock className="mr-2 text-gray-700" />
           <span>Game Time: {gameTime}s</span>
         </div>
-        {/* Additional footer content can go here */}
+        {/* Pause/Resume Button */}
+        <div className="flex items-center">
+          <button 
+            className={`p-2 rounded ${paused ? 'bg-green-500' : 'bg-red-500'} text-white`}
+            onClick={() => setPaused(prev => !prev)}
+            aria-label={paused ? "Resume game" : "Pause game"}
+          >
+            {paused ? 'Resume' : 'Pause'}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Side Panel Overlay */}
+      {isSidePanelOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden" onClick={() => setIsSidePanelOpen(false)}></div>
+      )}
     </div>
   );
 };
