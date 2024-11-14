@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Heart, Droplet, Sun, Sparkles, Moon, Clock, Award, Flower2, Trash2, Menu, X 
+  Heart, Droplet, Sun, Sparkles, Moon, Clock, Award, Flower2, Trash2, Menu, X, Shuffle 
 } from 'lucide-react';
 import classNames from 'classnames';
 
@@ -15,23 +15,23 @@ const GRID_HEIGHT = 15;
 const SPECIAL_COMBINATIONS = {
   ROSE_MOONFLOWER: {
     plants: ['ROSE', 'MOONFLOWER'],
-    message: "You are now a LoverGirl✨",
+    message: "Like these flowers under moonlight, you make everything magical ✨",
     achievement: "Moonlit Romance"
   },
   CRYSTAL_STARBLOOM: {
     plants: ['CRYSTAL_LOTUS', 'STARBLOOM'],
-    message: " Brightest girl there has ever been💫",
-    achievement: "Sexiest Gyal"
+    message: "Your presence sparkles brighter than any star in this garden 💫",
+    achievement: "Stellar Connection"
   },
   RAINBOW_PHOENIX: {
     plants: ['RAINBOW_IRIS', 'PHOENIX_BLOOM'],
-    message: " You are a fruit cup 🌈",
-    achievement: "Out the closet"
+    message: "Together we create something beautiful and rare, just like you 🌈",
+    achievement: "Magical Bond"
   },
   DRAGON_CRYSTAL: {
     plants: ['DRAGON_SNAP', 'CRYSTAL_LOTUS'],
-    message: " Boss ass bitch ✨",
-    achievement: "Bossy Babe"
+    message: "Strong yet gentle, like our love ✨",
+    achievement: "Mystic Harmony"
   },
   // Additional combinations can be added here
 };
@@ -49,7 +49,7 @@ const PLANTS = {
     offspring: ['RAINBOW_IRIS', 'ROSE'],
     repels: ['THISTLE'],
     rarity: 'common',
-    description: 'A classic'
+    description: 'A classic symbol of our love'
   },
   CRYSTAL_LOTUS: {
     name: 'Crystal Lotus',
@@ -228,7 +228,8 @@ const WEATHER_TYPES = {
 const TOOLS = {
   PLANT: 'PLANT',
   WATER: 'WATER',
-  REMOVE: 'REMOVE'
+  REMOVE: 'REMOVE',
+  CROSS_POLLINATE: 'CROSS_POLLINATE'
 };
 
 // Helper Functions
@@ -297,46 +298,63 @@ const calculateEnvironmentalScore = (cell, adjacentCells, weather) => {
   return score;
 };
 
-// New cross-pollination mechanics with limit
-const attemptCrossPollination = (garden, x, y) => {
-  const cell = garden[y][x];
-  if (!cell || cell.hasCrossPollinated) return null; // Check if already cross-pollinated
-
+// Calculate Magical Influence
+const calculateMagicalInfluence = (newGarden, x, y, magicLevel, checkGeometric = false, setNotification) => {
+  const cell = newGarden[y][x];
   const plantInfo = PLANTS[cell.type];
-  const adjacent = getAdjacentCells(garden, x, y);
-  const adjacentPlants = adjacent.filter(c => c && c.type !== cell.type);
+  let influence = 0;
 
-  if (adjacentPlants.length === 0) return null;
-
-  // Check for cross-pollination
-  if (Math.random() < plantInfo.pollinationChance) {
-    const partner = adjacentPlants[Math.floor(Math.random() * adjacentPlants.length)];
-    const partnerInfo = PLANTS[partner.type];
-
-    // Create magical pollen particle effect
-    createPollenEffect(x, y);
-
-    // Determine offspring
-    const possibleOffspring = [...new Set([...plantInfo.offspring, ...partnerInfo.offspring])];
-    const offspringType = possibleOffspring[Math.floor(Math.random() * possibleOffspring.length)];
-
-    // Set the flag to true to prevent further cross-pollination
-    cell.hasCrossPollinated = true;
-
-    return offspringType;
+  // Magical resonance based on plant rarity
+  switch (plantInfo.rarity) {
+    case 'legendary': influence += 3; break;
+    case 'epic': influence += 2; break;
+    case 'rare': influence += 1; break;
+    default: influence += 0.5;
   }
 
-  return null;
+  // Special magical interactions
+  if (plantInfo.needs.magic) {
+    influence += (magicLevel / 100) * 2;
+  }
+
+  // Geometric patterns boost magic
+  if (checkGeometric && checkGeometricPattern(newGarden, x, y, cell.type)) {
+    influence *= 1.5;
+    setNotification(`✨ Magical resonance detected at square (${x}, ${y})!`, 'magic');
+  }
+
+  return influence;
 };
 
-// Pollen effect animation
-const createPollenEffect = (x, y) => {
-  const pollen = document.createElement('div');
-  pollen.className = 'pollen-particle';
-  pollen.style.left = `${x * TILE_SIZE + TILE_SIZE / 2 - 4}px`; // Centering the particle
-  pollen.style.top = `${y * TILE_SIZE + TILE_SIZE / 2 - 4}px`;
-  document.getElementById('garden-grid').appendChild(pollen);
-  setTimeout(() => pollen.remove(), 2000);
+// Calculate Moonlight Effect
+const calculateMoonlightEffect = (cell, moonPhase) => {
+  const plantInfo = PLANTS[cell.type];
+  if (!plantInfo.needs.moonlight) return 0;
+
+  // Moon phase affects plants that need moonlight
+  const moonStrength = Math.sin((moonPhase / 30) * Math.PI) + 1; // 0 to 2
+  return moonStrength * (plantInfo.needs.moonlight / 10);
+};
+
+// Check for Geometric Patterns
+const checkGeometricPattern = (garden, x, y, type) => {
+  // Check for square or triangle patterns of the same plant type
+  const directions = [
+    [1, 0], [0, 1], [1, 1], [1, -1]
+  ];
+  let count = 0;
+
+  directions.forEach(([dx, dy]) => {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (nx >= 0 && nx < GRID_WIDTH && ny >= 0 && ny < GRID_HEIGHT) {
+      if (garden[ny][nx]?.type === type) {
+        count += 1;
+      }
+    }
+  });
+
+  return count >= 3;
 };
 
 // Add CSS animations for the garden
@@ -426,7 +444,7 @@ const YelebesGardenGame = () => {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [selectedTool, setSelectedTool] = useState(TOOLS.PLANT); // Default tool
   const [gameTime, setGameTime] = useState(0);
-  const [notification, setNotification] = useState(null); // Changed from array to single object
+  const [notification, setNotification] = useState(null); // Single notification
   const [achievements, setAchievements] = useState([]);
   const [moonPhase, setMoonPhase] = useState(0);
   const [rarePlantDiscoveries, setRarePlantDiscoveries] = useState(new Set());
@@ -450,6 +468,12 @@ const YelebesGardenGame = () => {
 
   // New State for Mobile Side Panel
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+
+  // State for Cross-Pollination Selection
+  const [crossPollinationSelection, setCrossPollinationSelection] = useState({
+    first: null, // {x, y}
+    second: null
+  });
 
   // Simulation Tick
   useEffect(() => {
@@ -483,8 +507,8 @@ const YelebesGardenGame = () => {
           const currentWeather = WEATHER_TYPES[weather];
 
           const environmentalScore = calculateEnvironmentalScore(cell, adjacentCells, currentWeather);
-          const magicalInfluence = calculateMagicalInfluence(newGarden, x, y);
-          const moonlightEffect = calculateMoonlightEffect(cell);
+          const magicalInfluence = calculateMagicalInfluence(newGarden, x, y, magicLevel, false, setNotification);
+          const moonlightEffect = calculateMoonlightEffect(cell, moonPhase);
 
           // Update plant stats
           cell.health = Math.min(100, cell.health + environmentalScore + magicalInfluence + moonlightEffect);
@@ -515,7 +539,7 @@ const YelebesGardenGame = () => {
   }, [garden, weather, moonPhase, magicLevel, lastWeatherChange, discoveredCombinations, resources]);
 
   // Calculate Magical Influence
-  const calculateMagicalInfluence = (newGarden, x, y) => {
+  const calculateMagicalInfluence = (newGarden, x, y, magicLevel, checkGeometric, setNotification) => {
     const cell = newGarden[y][x];
     const plantInfo = PLANTS[cell.type];
     let influence = 0;
@@ -534,16 +558,16 @@ const YelebesGardenGame = () => {
     }
 
     // Geometric patterns boost magic
-    if (checkGeometricPattern(newGarden, x, y, cell.type)) {
+    if (checkGeometric && checkGeometricPattern(newGarden, x, y, cell.type)) {
       influence *= 1.5;
-      addNotification(`✨ Magical resonance detected at square (${x}, ${y})!`, 'magic');
+      setNotification(`✨ Magical resonance detected at square (${x}, ${y})!`, 'magic');
     }
 
     return influence;
   };
 
   // Calculate Moonlight Effect
-  const calculateMoonlightEffect = (cell) => {
+  const calculateMoonlightEffect = (cell, moonPhase) => {
     const plantInfo = PLANTS[cell.type];
     if (!plantInfo.needs.moonlight) return 0;
 
@@ -600,30 +624,8 @@ const YelebesGardenGame = () => {
       };
     }
 
-    // Handle spreading with cross-pollination
-    if (Math.random() < 0.3) {
-      const emptyAdjacent = getEmptyAdjacentTiles(newGarden, x, y);
-      if (emptyAdjacent.length > 0) {
-        const [newX, newY] = emptyAdjacent[Math.floor(Math.random() * emptyAdjacent.length)];
-        
-        // Check for cross-pollination
-        const offspring = attemptCrossPollination(newGarden, x, y);
-        const newPlantType = offspring || cell.type;
-        
-        newGarden[newY][newX] = createNewPlant(newPlantType);
-        cell.lastSpread = Date.now();
-        
-        if (offspring) {
-          addNotification(`💕 Cross-pollination created a new ${PLANTS[newPlantType].name}!`, 'special');
-          setScore(prev => prev + getPlantScore(PLANTS[newPlantType].rarity));
-        } else if (plantInfo.rarity === 'legendary' || plantInfo.rarity === 'epic') {
-          addNotification(`✨ A rare ${plantInfo.name} has spread!`, 'success');
-          setScore(prev => prev + getPlantScore(plantInfo.rarity));
-        }
-      }
-    }
-    
-    cell.growth = 4;
+    // Handle spreading with cross-pollination is now manual, so remove automatic spread
+    // Previously handled spreading here
   };
 
   // Get Empty Adjacent Tiles
@@ -745,9 +747,111 @@ const YelebesGardenGame = () => {
         }
         break;
 
+      case TOOLS.CROSS_POLLINATE:
+        handleCrossPollinationClick(x, y);
+        break;
+
       default:
         break;
     }
+  };
+
+  // Handle Cross-Pollination Clicks
+  const handleCrossPollinationClick = (x, y) => {
+    const selectedCell = garden[y][x];
+    if (!selectedCell) {
+      addNotification('❌ Please select a plant to cross-pollinate.', 'error');
+      return;
+    }
+
+    // If first selection is null, set it
+    if (!crossPollinationSelection.first) {
+      setCrossPollinationSelection({ first: { x, y }, second: null });
+      addNotification(`🔍 Selected first plant at (${x}, ${y}). Select another adjacent plant.`, 'info');
+      return;
+    }
+
+    // If second selection is already set, reset selections
+    if (crossPollinationSelection.second) {
+      setCrossPollinationSelection({ first: null, second: null });
+    }
+
+    // Check if the second plant is adjacent to the first
+    const first = crossPollinationSelection.first;
+    const isAdjacent = Math.abs(first.x - x) <= 1 && Math.abs(first.y - y) <= 1 && !(first.x === x && first.y === y);
+
+    if (!isAdjacent) {
+      addNotification('❌ Plants must be adjacent to cross-pollinate.', 'error');
+      setCrossPollinationSelection({ first: null, second: null });
+      return;
+    }
+
+    const second = { x, y };
+    setCrossPollinationSelection({ first, second });
+
+    // Perform cross-pollination
+    performCrossPollination(first, second);
+  };
+
+  // Perform Cross-Pollination
+  const performCrossPollination = (first, second) => {
+    const firstPlant = garden[first.y][first.x];
+    const secondPlant = garden[second.y][second.x];
+
+    if (!firstPlant || !secondPlant) {
+      addNotification('❌ One of the selected plants does not exist.', 'error');
+      return;
+    }
+
+    // Optional: Check for resources, e.g., magic
+    if (resources.magic < 10) {
+      addNotification('❌ Not enough magic to perform cross-pollination!', 'error');
+      return;
+    }
+
+    // Determine offspring based on both plants' offspring lists
+    const possibleOffspring = [...new Set([...PLANTS[firstPlant.type].offspring, ...PLANTS[secondPlant.type].offspring])];
+    if (possibleOffspring.length === 0) {
+      addNotification('❌ These plants cannot cross-pollinate.', 'error');
+      return;
+    }
+
+    const offspringType = possibleOffspring[Math.floor(Math.random() * possibleOffspring.length)];
+
+    // Find an empty adjacent tile around the first plant
+    const emptyAdjacentFirst = getEmptyAdjacentTiles(garden, first.x, first.y);
+    // Find an empty adjacent tile around the second plant
+    const emptyAdjacentSecond = getEmptyAdjacentTiles(garden, second.x, second.y);
+    // Combine and remove duplicates
+    const emptyTiles = [...emptyAdjacentFirst, ...emptyAdjacentSecond].filter((tile, index, self) => 
+      index === self.findIndex(t => t[0] === tile[0] && t[1] === tile[1]))
+    ;
+
+    if (emptyTiles.length === 0) {
+      addNotification('❌ No empty space available for offspring.', 'error');
+      return;
+    }
+
+    // Choose a random empty tile for the offspring
+    const [offspringX, offspringY] = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+
+    // Create the offspring plant
+    setGarden(prev => {
+      const newGarden = prev.map(row => [...row]);
+      newGarden[offspringY][offspringX] = createNewPlant(offspringType);
+      return newGarden;
+    });
+
+    // Deduct magic resource
+    setResources(prev => ({
+      ...prev,
+      magic: prev.magic - 10
+    }));
+
+    addNotification(`💕 Cross-pollinated ${PLANTS[firstPlant.type].name} and ${PLANTS[secondPlant.type].name} to create ${PLANTS[offspringType].name}!`, 'special');
+
+    // Reset cross-pollination selection
+    setCrossPollinationSelection({ first: null, second: null });
   };
 
   // Helper function to get plant score
@@ -946,6 +1050,7 @@ const YelebesGardenGame = () => {
                       'bg-green-100 hover:bg-green-200': selectedTool === TOOLS.PLANT && !cell,
                       'bg-blue-100 hover:bg-blue-200': selectedTool === TOOLS.WATER && cell,
                       'bg-red-100 hover:bg-red-200': selectedTool === TOOLS.REMOVE && cell,
+                      'bg-purple-100 hover:bg-purple-200': selectedTool === TOOLS.CROSS_POLLINATE && cell,
                       'bg-gray-100 cursor-not-allowed': paused
                     }
                   )}
@@ -991,7 +1096,10 @@ const YelebesGardenGame = () => {
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.PLANT
                   }
                 )}
-                onClick={() => setSelectedTool(TOOLS.PLANT)}
+                onClick={() => {
+                  setSelectedTool(TOOLS.PLANT);
+                  setCrossPollinationSelection({ first: null, second: null }); // Reset cross-pollination selection
+                }}
                 aria-label="Plant tool"
               >
                 <Flower2 />
@@ -1004,7 +1112,10 @@ const YelebesGardenGame = () => {
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.WATER
                   }
                 )}
-                onClick={() => setSelectedTool(TOOLS.WATER)}
+                onClick={() => {
+                  setSelectedTool(TOOLS.WATER);
+                  setCrossPollinationSelection({ first: null, second: null }); // Reset cross-pollination selection
+                }}
                 aria-label="Water tool"
               >
                 <Droplet />
@@ -1017,10 +1128,30 @@ const YelebesGardenGame = () => {
                     'bg-white hover:bg-gray-100': selectedTool !== TOOLS.REMOVE
                   }
                 )}
-                onClick={() => setSelectedTool(TOOLS.REMOVE)}
+                onClick={() => {
+                  setSelectedTool(TOOLS.REMOVE);
+                  setCrossPollinationSelection({ first: null, second: null }); // Reset cross-pollination selection
+                }}
                 aria-label="Remove tool"
               >
                 <Trash2 />
+              </button>
+              <button 
+                className={classNames(
+                  'p-3 rounded flex items-center justify-center',
+                  {
+                    'bg-purple-500 text-white': selectedTool === TOOLS.CROSS_POLLINATE,
+                    'bg-white hover:bg-gray-100': selectedTool !== TOOLS.CROSS_POLLINATE
+                  }
+                )}
+                onClick={() => {
+                  setSelectedTool(TOOLS.CROSS_POLLINATE);
+                  setCrossPollinationSelection({ first: null, second: null }); // Reset cross-pollination selection
+                  addNotification('🔄 Select two adjacent plants to cross-pollinate.', 'info');
+                }}
+                aria-label="Cross-Pollinate tool"
+              >
+                <Shuffle />
               </button>
             </div>
           </div>
