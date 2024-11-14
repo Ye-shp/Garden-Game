@@ -15,25 +15,25 @@ const GRID_HEIGHT = 15;
 const SPECIAL_COMBINATIONS = {
   ROSE_MOONFLOWER: {
     plants: ['ROSE', 'MOONFLOWER'],
-    message: "Sexiest gyal ✨",
-    achievement: "Sexiest Woman Alive"
+    message: "You are now a LoverGirl✨",
+    achievement: "Moonlit Romance"
   },
   CRYSTAL_STARBLOOM: {
     plants: ['CRYSTAL_LOTUS', 'STARBLOOM'],
-    message: "Your presence is a gift 💫",
-    achievement: "Lover girl!!!!"
+    message: " Brightest girl there has ever been💫",
+    achievement: "Sexiest Gyal"
   },
   RAINBOW_PHOENIX: {
     plants: ['RAINBOW_IRIS', 'PHOENIX_BLOOM'],
-    message: "You're a fruit cup 🌈",
+    message: " You are a fruit cup 🌈",
     achievement: "Out the closet"
   },
   DRAGON_CRYSTAL: {
     plants: ['DRAGON_SNAP', 'CRYSTAL_LOTUS'],
-    message: "You cool big bro✨",
-    achievement: "Big bro award"
+    message: " Boss ass bitch ✨",
+    achievement: "Bossy Babe"
   },
-
+  // Additional combinations can be added here
 };
 
 // Plant Definitions with Cross-Pollination Traits
@@ -49,7 +49,7 @@ const PLANTS = {
     offspring: ['RAINBOW_IRIS', 'ROSE'],
     repels: ['THISTLE'],
     rarity: 'common',
-    description: 'A classic symbol of our love'
+    description: 'A classic'
   },
   CRYSTAL_LOTUS: {
     name: 'Crystal Lotus',
@@ -426,7 +426,7 @@ const YelebesGardenGame = () => {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [selectedTool, setSelectedTool] = useState(TOOLS.PLANT); // Default tool
   const [gameTime, setGameTime] = useState(0);
-  const [notifications, setNotifications] = useState([]);
+  const [notification, setNotification] = useState(null); // Changed from array to single object
   const [achievements, setAchievements] = useState([]);
   const [moonPhase, setMoonPhase] = useState(0);
   const [rarePlantDiscoveries, setRarePlantDiscoveries] = useState(new Set());
@@ -536,7 +536,7 @@ const YelebesGardenGame = () => {
     // Geometric patterns boost magic
     if (checkGeometricPattern(newGarden, x, y, cell.type)) {
       influence *= 1.5;
-      addNotification(`✨ Magical resonance detected at (${x}, ${y})!`, 'magic');
+      addNotification(`✨ Magical resonance detected at square (${x}, ${y})!`, 'magic');
     }
 
     return influence;
@@ -573,29 +573,11 @@ const YelebesGardenGame = () => {
     return count >= 3;
   };
 
-  // Add Notification
+  // Add Notification (Limited to One at a Time)
   const addNotification = (message, type = 'info') => {
-    const id = Date.now();
-    const notification = {
-      id,
-      message,
-      type,
-      className: classNames(
-        'px-4 py-2 rounded-lg shadow-lg text-white transform transition-all duration-500',
-        {
-          'bg-green-500': type === 'success',
-          'bg-blue-500': type === 'info',
-          'bg-yellow-500': type === 'warning',
-          'bg-red-500': type === 'error',
-          'bg-purple-500': type === 'magic',
-          'bg-gradient-to-r from-pink-500 to-purple-500': type === 'special'
-        }
-      )
-    };
-    
-    setNotifications(prev => [...prev, notification]);
+    setNotification({ message, type });
     setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      setNotification(null);
     }, type === 'special' ? 5000 : 3000);
   };
 
@@ -951,7 +933,8 @@ const YelebesGardenGame = () => {
             backgroundColor: '#e0ffe0',
             padding: '10px',
             borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',            
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            // Removed the non-reactive transform based on window.innerWidth
           }}>
             {garden.map((row, y) =>
               row.map((cell, x) => (
@@ -1147,13 +1130,23 @@ const YelebesGardenGame = () => {
       </div>
       
       {/* Notifications */}
-      <div className="fixed top-4 right-4 space-y-2 z-50">
-        {notifications.map(n => (
-          <div key={n.id} className={n.className}>
-            {n.message}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50">
+          <div className={classNames(
+            'px-4 py-2 rounded-lg shadow-lg text-white transform transition-all duration-500',
+            {
+              'bg-green-500': notification.type === 'success',
+              'bg-blue-500': notification.type === 'info',
+              'bg-yellow-500': notification.type === 'warning',
+              'bg-red-500': notification.type === 'error',
+              'bg-purple-500': notification.type === 'magic',
+              'bg-gradient-to-r from-pink-500 to-purple-500': notification.type === 'special'
+            }
+          )}>
+            {notification.message}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
       
       {/* Footer with Game Time */}
       <div className="p-4 bg-white/80 backdrop-blur-sm shadow-t border-t border-purple-100 flex justify-between items-center">
