@@ -13,28 +13,82 @@ const GRID_HEIGHT = 15;
 
 // Special Combinations with Romantic Messages
 const SPECIAL_COMBINATIONS = {
-  ROSE_MOONFLOWER: {
-    plants: ['ROSE', 'MOONFLOWER'],
-    message: "Like these flowers under moonlight, you make everything magical ✨",
-    achievement: "Moonlit Romance"
-  },
-  CRYSTAL_STARBLOOM: {
-    plants: ['CRYSTAL_LOTUS', 'STARBLOOM'],
-    message: "Your presence sparkles brighter than any star in this garden 💫",
-    achievement: "Stellar Connection"
-  },
-  RAINBOW_PHOENIX: {
-    plants: ['RAINBOW_IRIS', 'PHOENIX_BLOOM'],
-    message: "Together we create something beautiful and rare, just like you 🌈",
-    achievement: "Magical Bond"
-  },
-  DRAGON_CRYSTAL: {
-    plants: ['DRAGON_SNAP', 'CRYSTAL_LOTUS'],
-    message: "Strong yet gentle, like our love ✨",
-    achievement: "Mystic Harmony"
-  },
-  // Additional combinations can be added here
-};
+    ROSE_MOONFLOWER: {
+      plants: ['ROSE', 'MOONFLOWER'],
+      message: "Your smile lights up even the darkest night ✨",
+      achievement: "Moonlit Wonder"
+    },
+    CRYSTAL_STARBLOOM: {
+      plants: ['CRYSTAL_LOTUS', 'STARBLOOM'],
+      message: "You make ordinary moments feel magical 💫",
+      achievement: "Stellar Spirit"
+    },
+    RAINBOW_PHOENIX: {
+      plants: ['RAINBOW_IRIS', 'PHOENIX_BLOOM'],
+      message: " Didn't know gossiping was fun before you🌈",
+      achievement: "Gossip girl"
+    },
+    DRAGON_CRYSTAL: {
+      plants: ['DRAGON_SNAP', 'CRYSTAL_LOTUS'],
+      message: " Smartest Person I know✨",
+      achievement: "Humble Genius"
+    },
+    LAVENDER_SAGE: {
+      plants: ['LAVENDER', 'SAGE'],
+      message: "You're funny once in a while 💜",
+      achievement: "Queen of smiles"
+    },
+    SUNFLOWER_PHOENIX: {
+      plants: ['SUNFLOWER', 'PHOENIX_BLOOM'],
+      message: "You inspire others to shine their brightest 🌻",
+      achievement: "Radiant Soul"
+    },
+    MOONFLOWER_SHADOW: {
+      plants: ['MOONFLOWER', 'SHADOW_VINE'],
+      message: "Miss never miss with a camera🌙",
+      achievement: "Photogenic"
+    },
+    RAINBOW_CRYSTAL: {
+      plants: ['RAINBOW_IRIS', 'CRYSTAL_LOTUS'],
+      message: "You'e a fruit cup!🌈",
+      achievement: "Out the closet"
+    },
+    DRAGON_PHOENIX: {
+      plants: ['DRAGON_SNAP', 'PHOENIX_BLOOM'],
+      message: "Keep a resting bitch face 🐲",
+      achievement: "Scare them away!"
+    },
+    STARBLOOM_MOONFLOWER: {
+      plants: ['STARBLOOM', 'MOONFLOWER'],
+      message: "You have a glow that puts the stars to shame ⭐",
+      achievement: "Star girl"
+    },
+    ROSE_LAVENDER: {
+      plants: ['ROSE', 'LAVENDER'],
+      message: "🌹",
+      achievement: "Mwaaah"
+    },
+    SAGE_CRYSTAL: {
+      plants: ['SAGE', 'CRYSTAL_LOTUS'],
+      message: "Your wisdom and kindness are truly remarkable 🌿",
+      achievement: "Kind Spirit"
+    },
+    SUNFLOWER_RAINBOW: {
+      plants: ['SUNFLOWER', 'RAINBOW_IRIS'],
+      message: "Your sweet gaze melts my heart🌻",
+      achievement: "Loving gaze"
+    },
+    DRAGON_MOONFLOWER: {
+      plants: ['DRAGON_SNAP', 'MOONFLOWER'],
+      message: "  Your ability to not waste a nut🐲",
+      achievement: "Master Nut "
+    },
+    CRYSTAL_SHADOW: {
+      plants: ['CRYSTAL_LOTUS', 'SHADOW_VINE'],
+      message: " Butt sex is not that scary✨",
+      achievement: "Anal queen"
+    }
+  };
 
 // Plant Definitions with Cross-Pollination Traits
 const PLANTS = {
